@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
 WeScan makes it easy to add scanning functionalities to your iOS app!
 It's modelled after UIImagePickerController, which makes it a breeze to use.
   DESC
-  s.homepage         = 'https://github.com/WeTransferArchive/WeScan'
+  s.homepage         = 'https://github.com/srmedia-dev/WeScan'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.authors          = {
     'Boris Emorine' => 'boris@wetransfer.com',
