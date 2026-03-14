@@ -213,7 +213,7 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
 
             self.noRectangleCount = 0
             self.rectangleFunnel
-                .add(rectangle, currentlyDisplayedRectangle: self.displayedRectangleResult?.rectangle) { [weak self] result, rectangle in
+                .add(rectangle, currentlyDisplayedRectangle: self.displayedRectangleResult?.rectangle, imageSize: imageSize) { [weak self] result, rectangle in
 
                 guard let self else {
                     return
@@ -235,8 +235,9 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
                 self.noRectangleCount += 1
 
                 if self.noRectangleCount > self.noRectangleThreshold {
-                    // Reset the currentAutoScanPassCount, so the threshold is restarted the next time a rectangle is found
+                    // Reset the currentAutoScanPassCount and EMA smoothing
                     self.rectangleFunnel.currentAutoScanPassCount = 0
+                    self.rectangleFunnel.resetSmoothing()
 
                     // Remove the currently displayed rectangle as no rectangles are being found anymore
                     self.displayedRectangleResult = nil
@@ -283,6 +284,7 @@ extension CaptureSessionManager: AVCapturePhotoCaptureDelegate {
 
         isDetecting = false
         rectangleFunnel.currentAutoScanPassCount = 0
+        rectangleFunnel.resetSmoothing()
         delegate?.didStartCapturingPicture(for: self)
 
         if let sampleBuffer = photoSampleBuffer,
@@ -308,6 +310,7 @@ extension CaptureSessionManager: AVCapturePhotoCaptureDelegate {
 
         isDetecting = false
         rectangleFunnel.currentAutoScanPassCount = 0
+        rectangleFunnel.resetSmoothing()
         delegate?.didStartCapturingPicture(for: self)
 
         if let imageData = photo.fileDataRepresentation() {
